@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الكتابة الخاصة الرقمية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-dark: #1e3c72;
+            --primary-light: #2a5298;
+            --accent-gold: #c9a050;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --danger: #e74c3c;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(to left, var(--primary-dark), var(--primary-light));
+            color: white;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .brand i { font-size: 1.8rem; color: var(--accent-gold); }
+        .brand h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+        
+        .date-display {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        /* --- Controls Bar --- */
+        .controls-bar {
+            padding: 1rem 3rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb-item {
+            cursor: pointer;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .breadcrumb-item:hover { color: var(--primary-dark); text-decoration: underline; }
+        .breadcrumb-item.active { color: var(--primary-dark); font-weight: 700; cursor: default; text-decoration: none; }
+        .breadcrumb-separator { font-size: 0.8rem; color: #ccc; }
+
+        .add-btn {
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(30, 60, 114, 0.2);
+        }
+
+        .add-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        /* --- Grid & Cards --- */
+        .container {
+            padding: 0 3rem 3rem 3rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: var(--shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 180px;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--primary-light);
+            transition: height 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .card:hover::before {
+            height: 6px;
+            background: var(--accent-gold);
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+            transition: transform 0.3s;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1);
+            color: var(--accent-gold);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(-5px);
+            display: flex;
+            gap: 8px;
+        }
+
+        .card:hover .card-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #eee;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .edit-btn { color: var(--primary-light); }
+        .delete-btn { color: var(--danger); }
+        
+        .action-btn:hover { transform: scale(1.1); background: #f9f9f9; }
+
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(30, 60, 114, 0.4);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 15px;
+            width: 450px;
+            max-width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            position: relative;
+            transform: translateY(20px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .modal-header h2 { margin: 0; color: var(--primary-dark); font-size: 1.4rem; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-main); }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+            border: none;
+            transition: opacity 0.3s;
+        }
+
+        .btn-cancel { background: #ecf0f1; color: var(--text-secondary); }
+        .btn-save { background: var(--primary-dark); color: white; }
+        .btn:hover { opacity: 0.9; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes cardPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .card { animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 4rem;
+            color: #bdc3c7;
+        }
+        .empty-state i { font-size: 4rem; margin-bottom: 1rem; display: block; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <i class="fa-solid fa-scale-balanced"></i>
+            <h1>الكتابة الخاصة الرقمية</h1>
+        </div>
+        <div class="date-display" id="currentDate">
+            </div>
+    </header>
+
+    <div class="controls-bar">
+        <div class="breadcrumbs" id="breadcrumbs"></div>
+        <button class="add-btn" onclick="openModal()">
+            <i class="fas fa-plus"></i> إضافة جديد
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="grid-container" id="grid"></div>
+    </div>
+
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">إضافة عنصر جديد</h2>
+            </div>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                
+                <div class="form-group">
+                    <label>عنوان الخانة</label>
+                    <input type="text" id="itemName" required placeholder="مثلاً: بوابة المحاكم، أرشيف 2025...">
+                </div>
+
+                <div class="form-group">
+                    <label>نوع العنصر</label>
+                    <select id="itemType" onchange="toggleUrlField()">
+                        <option value="link">رابط (موقع / ملف خارجي)</option>
+                        <option value="folder">مجلد (تنظيم داخلي)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="urlGroup">
+                    <label>الرابط / المسار</label>
+                    <input type="text" id="itemUrl" placeholder="https://www.example.ma">
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-save">حفظ البيانات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- إعدادات التاريخ ---
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'gregory' };
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('ar-MA', options);
+
+        // --- إدارة البيانات ---
+        let items = JSON.parse(localStorage.getItem('digitalOfficeDataV2')) || [];
+        let currentParentId = null;
+        let navigationStack = [{id: null, name: '<i class="fas fa-home"></i> الرئيسية'}];
+
+        function saveData() {
+            localStorage.setItem('digitalOfficeDataV2', JSON.stringify(items));
+            renderGrid();
+        }
+
+        // --- العرض ---
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            const currentItems = items.filter(item => item.parentId === currentParentId);
+
+            if (currentItems.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>المجلد فارغ حالياً. اضغط على "إضافة جديد" للبدء.</p>
+                    </div>`;
+            }
+
+            currentItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                // تأخير بسيط للحركة لتبدو متتابعة
+                card.style.animationDelay = `${index * 0.05}s`;
+                
+                let iconClass = item.type === 'folder' ? 'fa-folder' : 'fa-link';
+                // تغيير الأيقونة بناء على الكلمات المفتاحية في الاسم لجعلها ذكية
+                if(item.name.includes('pdf')) iconClass = 'fa-file-pdf';
+                else if(item.name.includes('word') || item.name.includes('doc')) iconClass = 'fa-file-word';
+                else if(item.name.includes('excel')) iconClass = 'fa-file-excel';
+                else if(item.name.includes('صور')) iconClass = 'fa-images';
+                else if(item.name.includes('قانون')) iconClass = 'fa-gavel';
+                
+                card.innerHTML = `
+                    <div class="card-actions">
+                        <button class="action-btn edit-btn" onclick="editItem(event, '${item.id}')"><i class="fas fa-pen"></i></button>
+                        <button class="action-btn delete-btn" onclick="deleteItem(event, '${item.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="card-icon"><i class="fas ${iconClass}"></i></div>
+                    <div class="card-title">${item.name}</div>
+                `;
+
+                card.onclick = (e) => {
+                    if(e.target.closest('.action-btn')) return;
+                    if (item.type === 'folder') enterFolder(item.id, item.name);
+                    else window.open(item.url, '_blank');
+                };
+
+                grid.appendChild(card);
+            });
+
+            renderBreadcrumbs();
+        }
+
+        function renderBreadcrumbs() {
+            const container = document.getElementById('breadcrumbs');
+            container.innerHTML = '';
+            
+            navigationStack.forEach((crumb, index) => {
+                const span = document.createElement('span');
+                span.className = `breadcrumb-item ${index === navigationStack.length - 1 ? 'active' : ''}`;
+                span.innerHTML = crumb.name;
+                
+                if (index < navigationStack.length - 1) {
+                    span.onclick = () => navigateToBreadcrumb(index);
+                    container.appendChild(span);
+                    const sep = document.createElement('span');
+                    sep.className = 'breadcrumb-separator';
+                    sep.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                    container.appendChild(sep);
+                } else {
+                    container.appendChild(span);
+                }
+            });
+        }
+
+        // --- التنقل ---
+        function enterFolder(id, name) {
+            currentParentId = id;
+            navigationStack.push({id: id, name: name});
+            renderGrid();
+        }
+
+        function navigateToBreadcrumb(index) {
+            navigationStack = navigationStack.slice(0, index + 1);
+            currentParentId = navigationStack[index].id;
+            renderGrid();
+        }
+
+        // --- النوافذ المنبثقة ---
+        const modal = document.getElementById('itemModal');
+        const form = document.getElementById('itemForm');
+
+        function openModal(isEdit = false) {
+            modal.style.display = 'flex';
+            document.getElementById('modalTitle').innerText = isEdit ? 'تعديل البيانات' : 'إضافة عنصر جديد';
+            if (!isEdit) {
+                form.reset();
+                document.getElementById('itemId').value = '';
+                toggleUrlField();
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function toggleUrlField() {
+            const type = document.getElementById('itemType').value;
+            const urlGroup = document.getElementById('urlGroup');
+            if (type === 'folder') {
+                urlGroup.style.display = 'none';
+                document.getElementById('itemUrl').removeAttribute('required');
+            } else {
+                urlGroup.style.display = 'block';
+                document.getElementById('itemUrl').setAttribute('required', 'true');
+            }
+        }
+
+        // --- العمليات ---
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('itemId').value;
+            const name = document.getElementById('itemName').value;
+            const type = document.getElementById('itemType').value;
+            const url = document.getElementById('itemUrl').value;
+
+            if (id) {
+                const index = items.findIndex(i => i.id === id);
+                if (index !== -1) {
+                    items[index].name = name;
+                    items[index].type = type;
+                    items[index].url = type === 'link' ? url : null;
+                }
+            } else {
+                items.push({
+                    id: Date.now().toString(),
+                    parentId: currentParentId,
+                    name: name,
+                    type: type,
+                    url: type === 'link' ? url : null
+                });
+            }
+            saveData();
+            closeModal();
+        };
+
+        function editItem(e, id) {
+            e.stopPropagation();
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('itemId').value = item.id;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemType').value = item.type;
+            document.getElementById('itemUrl').value = item.url || '';
+            openModal(true);
+            toggleUrlField();
+        }
+
+        function deleteItem(e, id) {
+            e.stopPropagation();
+            if (confirm('تنبيه: هل أنت متأكد من الحذف؟ لا يمكن التراجع عن هذه العملية.')) {
+                deleteRecursive(id);
+                saveData();
+            }
+        }
+
+        function deleteRecursive(id) {
+            items = items.filter(i => i.id !== id);
+            const children = items.filter(i => i.parentId === id);
+            children.forEach(child => deleteRecursive(child.id));
+        }
+
+        window.onclick = function(event) { if (event.target == modal) closeModal(); }
+        
+        // التشغيل
+        renderGrid();
+    </script>
+</body>
+</html>
